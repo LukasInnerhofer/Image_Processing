@@ -1,43 +1,31 @@
-#include <iostream>
-#include <fstream>
-#include <cstddef>
+#include "image_processing.h"
 
-#define INPUT_FILENAME "image.png"
-
-int main()
+namespace image_processing
 {
-	std::ifstream file;
-	size_t size = 0;
-
-	std::cout << "Attempting to open " << INPUT_FILENAME << std::endl;
-	
-	file.open(INPUT_FILENAME, std::ios::in | std::ios::binary | std::ios::ate);
-	char *data = 0;
-
-	file.seekg(0, std::ios::end);
-	size = file.tellg();
-	std::cout << "File size: " << size << std::endl;
-	file.seekg(0, std::ios::beg);
-
-	data = new char[size - 8 + 1];
-	file.read(data, size);
-	data[size] = '\0';
-	std::cout << "Data size: " << file.tellg() << std::endl;
-
-	std::cout << std::endl;
-	for(unsigned int iterator = 0; iterator < size; ++iterator)
+	int readImage(std::string inputFileName, char data[])
 	{
-		std::cout << std::endl << "#" << std::dec << iterator << ": " << std::hex << static_cast<short>(data[iterator]);
+		std::ifstream file;
+		size_t size = 0;
+	
+		file.open(inputFileName, std::ios::in | std::ios::binary | std::ios::ate);
+
+		file.seekg(0, std::ios::end);
+		size = file.tellg();
+		file.seekg(0, std::ios::beg);
+
+		file.read(data, size);
+		data[size] = '\0';
+
+		file.close();	
+
+		return size;
 	}
-	file.close();	
 
-	std::ofstream out("out.png", std::ios::binary);
-	out.write(data, size - 8);
-	out.close();
-
-	std::cin.get();
-	return 0;
+	void writeImage(std::string outputFileName, char data[], size_t size)
+	{
+		std::ofstream file(outputFileName, std::ios::binary);
+		file.write(data, size - 8);
+		file.close();
+	}
 }
-
-
 
